@@ -5,7 +5,7 @@ export default function TextPage(props) {
     <plaintext
       style={{ whiteSpace: "normal", minHeight: "600px", textAlign: "justify" }}
     >
-      {props.text}
+      {props.data.text}
     </plaintext>
   );
 }

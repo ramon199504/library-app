@@ -1,22 +1,16 @@
 import React, { useState, useEffect } from "react";
 import BookList from "./BookList.js";
-import BasePage from "./BasePage.js";
+import Page from "./Page.js";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import Api from "./Api";
 
 function App() {
-  const defaultBooks = [
-    { name: "Harry Potter", id: "1" },
-    { name: "Shrek", id: "2" },
-    { name: "Don Quixote", id: "3" }
-  ];
-  const [books, setBooks] = React.useState(defaultBooks);
+  const [books, setBooks] = React.useState("");
 
   const handleBooksResponse = data => {
     setBooks(data);
   };
 
-  useEffect(() => getBooks(), []);
   const getBooks = async () => {
     try {
       const response = await Api.get("/books", {});
@@ -26,15 +20,25 @@ function App() {
     }
   };
 
+  // Get books when component first mounts
+  useEffect(() => getBooks(), []);
+
+  const List = () => {
+    if (books === "") {
+      return <h1>No hay libros disponibles</h1>;
+    } else {
+      return <BookList books={books} />;
+    }
+  };
   return (
     <Router>
       <div>
         <Switch>
           <Route exact path="/">
-            <BookList books={books} />
+            <List />
           </Route>
           <Route path="/view/:id/:page">
-            <BasePage />
+            <Page />
           </Route>
         </Switch>
       </div>

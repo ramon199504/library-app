@@ -17,7 +17,7 @@ var booksJSON = [];
 var pagesJSON = [];
 var numPages = [];
 for (var i = 0; i < numBooks; ++i) {
-  numPages.push(Math.floor(Math.random() * +maxNumPages));
+  numPages.push(Math.floor(Math.random() * +maxNumPages + 1));
 }
 
 const processTextResponses = () => {
@@ -26,6 +26,7 @@ const processTextResponses = () => {
     for (var j = 0; j < numPages[i]; ++j) {
       book.pages.push({
         page: j + 1,
+        format: "text",
         text: textResponses[i * maxNumPages + j]
       });
     }

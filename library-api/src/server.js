@@ -40,12 +40,12 @@ app.get("/books", function(request, response) {
 
 // Handles fetching individual book from DB
 app.post("/book", function(request, response) {
-  Book.find({ _id: request.body._id }, function(err, data) {
+  Book.find({ _id: parseInt(request.body._id) }, function(err, data) {
     if (err) {
       response.status(500).send({ error: "Could not fetch products" });
     }
     if (data.length === 0) {
-      response.send({ status: 400, name: "" });
+      response.send({ status: 400 });
     } else {
       response.send(data[0]);
     }
@@ -55,12 +55,12 @@ app.post("/book", function(request, response) {
 // Handles fetching 'pages' from DB
 app.post("/view", function(request, response) {
   console.log("id = " + request.body.page);
-  Pages.find({ _id: request.body._id }, function(err, data) {
+  Pages.find({ _id: parseInt(request.body._id) }, function(err, data) {
     if (err) {
       response.status(500).send({ error: "Could not fetch products" });
     }
     if (data.length === 0) {
-      response.send({ status: 400, name: "" });
+      response.send({ status: 400 });
     } else {
       response.send(
         data[0].pages.find(page => {

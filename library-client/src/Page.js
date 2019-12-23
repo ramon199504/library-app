@@ -4,13 +4,17 @@ import TextPage from "./TextPage";
 import { pageFormats } from "./PageFormats";
 import Api from "./Api";
 
-export default function BasePage(props) {
+export default function Page(props) {
   let { id, page } = useParams();
-  const [pageText, setPageText] = useState("");
+  const [pageData, setPageData] = useState("");
   const [book, setBook] = useState("");
 
   const handlePageResponse = data => {
-    setPageText(data.text);
+    if (data.status === 400) {
+      setPageData("");
+    } else {
+      setPageData(data);
+    }
   };
 
   const getPage = async () => {
@@ -26,7 +30,11 @@ export default function BasePage(props) {
   };
 
   const handleBookResponse = data => {
-    setBook(data);
+    if (data.status === 400) {
+      setBook("");
+    } else {
+      setBook(data);
+    }
   };
 
   const getBook = async () => {
@@ -46,7 +54,7 @@ export default function BasePage(props) {
     getPage();
   }, [page]);
 
-  //TODO: clean this up
+  // Edge case checking to keep pages inside page bounds
   var nextPage, previousPage;
   if (page <= 1) {
     page = 1;
@@ -61,27 +69,32 @@ export default function BasePage(props) {
     nextPage = parseInt(page) + 1;
   }
 
-  //TODO: consider renaming file to Page and HOC to basepage
-  const Page = props => {
-    if (props.format === pageFormats.TEXT) {
-      return <TextPage text={pageText} />;
+  // Higher order component, any new formats should be added here.
+  const BasePage = () => {
+    console.log(pageData);
+    if (pageData.format === pageFormats.TEXT) {
+      return <TextPage data={pageData} />;
     } else {
-      return <div>Another page</div>;
+      return <h2>Formato no reconocido</h2>;
     }
   };
-  return (
-    <div style={{ margin: "auto", maxWidth: "80%" }}>
-      <Link to="/">Back to Library</Link> <br />
-      <br />
-      <br />
-      <h1>{book.name}</h1>
-      {/*TODO: remove format prop and add format to backend */}
-      <Page style={{ minHeight: "500px" }} format={pageFormats.TEXT} />
-      <Link to={`/view/${id}/${previousPage}`}>Previous Page</Link>
-      <span style={{ padding: "0px 10px" }}>
-        Page {`${page}`} / {`${book.numPages}`}
-      </span>
-      <Link to={`/view/${id}/${nextPage}`}>Next Page</Link>
-    </div>
-  );
+
+  if (book != "" && pageData != "") {
+    return (
+      <div style={{ margin: "auto", maxWidth: "80%" }}>
+        <Link to="/">Devuelta a la librería</Link>
+        <div style={{ textAlign: "center" }}>
+          <h1>{book.name}</h1>
+          <BasePage style={{ minHeight: "500px" }} />
+          <Link to={`/view/${id}/${previousPage}`}>Página Anterior</Link>
+          <span style={{ padding: "0px 10px" }}>
+            Página {`${page}`} / {`${book.numPages}`}
+          </span>
+          <Link to={`/view/${id}/${nextPage}`}>Próxima Página</Link>
+        </div>
+      </div>
+    );
+  } else {
+    return <h1>Página no encontrada</h1>;
+  }
 }
