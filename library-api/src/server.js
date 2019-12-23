@@ -53,7 +53,8 @@ app.get("/book", function(request, response) {
 });
 
 // Handles fetching 'pages' from DB
-app.get("/view", function(request, response) {
+app.post("/view", function(request, response) {
+  console.log("id = " + request.body.page);
   Pages.find({ _id: request.body._id }, function(err, data) {
     if (err) {
       response.status(500).send({ error: "Could not fetch products" });

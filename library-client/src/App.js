@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import BookList from "./BookList.js";
 import BasePage from "./BasePage.js";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import Api from "./Api";
 
 function App() {
   const defaultBooks = [
@@ -9,8 +10,22 @@ function App() {
     { name: "Shrek", id: "2" },
     { name: "Don Quixote", id: "3" }
   ];
-
   const [books, setBooks] = React.useState(defaultBooks);
+
+  const handleBooksResponse = data => {
+    setBooks(data);
+  };
+
+  useEffect(() => getBooks(), []);
+  const getBooks = async () => {
+    try {
+      const response = await Api.get("/books", {});
+      handleBooksResponse(response.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return (
     <Router>
       <div>
@@ -19,7 +34,7 @@ function App() {
             <BookList books={books} />
           </Route>
           <Route path="/view/:id/:page">
-            <BasePage />
+            <BasePage books={books} />
           </Route>
         </Switch>
       </div>
