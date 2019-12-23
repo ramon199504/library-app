@@ -2,6 +2,7 @@
 
 # dependencies
 library-client/node_modules
+library-seeder/node_modules
 /.pnp
 .pnp.js
 
