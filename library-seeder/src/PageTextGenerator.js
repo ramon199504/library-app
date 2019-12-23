@@ -2,12 +2,12 @@ const https = require("https");
 const http = require("http");
 var fs = require("fs");
 
-const numPages = 13;
-const numBooks = 7;
+const maxNumPages = 15;
+const numBooks = 12;
 
 const nameURL =
   "http://names.drycodes.com/1?nameOptions=starwarsTitles&separator=space&format=text";
-const textURL = "https://loripsum.net/api/5/medium/plaintext/";
+const textURL = "https://loripsum.net/api/3/long/plaintext/";
 
 var completedNamesReqs = 0;
 var completedTextReqs = 0;
@@ -15,12 +15,19 @@ var textResponses = [];
 var nameResponses = [];
 var booksJSON = [];
 var pagesJSON = [];
+var numPages = [];
+for (var i = 0; i < numBooks; ++i) {
+  numPages.push(Math.floor(Math.random() * +maxNumPages));
+}
 
 const processTextResponses = () => {
   for (var i = 0; i < numBooks; ++i) {
     var book = { id: i, pages: [] };
-    for (var j = 0; j < numPages; ++j) {
-      book.pages.push({ page: j + 1, text: textResponses[i * numPages + j] });
+    for (var j = 0; j < numPages[i]; ++j) {
+      book.pages.push({
+        page: j + 1,
+        text: textResponses[i * maxNumPages + j]
+      });
     }
     pagesJSON.push(book);
   }
@@ -33,7 +40,7 @@ const processTextResponses = () => {
 
 const processNameResponses = () => {
   for (var i = 0; i < numBooks; ++i) {
-    booksJSON.push({ name: nameResponses[i], id: i, numPages: numPages });
+    booksJSON.push({ name: nameResponses[i], id: i, numPages: numPages[i] });
   }
   var jsonBooks = JSON.stringify(booksJSON);
   fs.writeFile("../data/books/books.json", jsonBooks, err => {
@@ -42,13 +49,13 @@ const processNameResponses = () => {
   });
 };
 
-for (var j = 0; j < numBooks * numPages; ++j) {
+for (var j = 0; j < numBooks * maxNumPages; ++j) {
   https.get(textURL, res => {
     res.on("data", d => {
       textResponses.push(d.toString("utf8"));
     });
     res.on("end", () => {
-      if (completedTextReqs++ == numBooks * numPages - 1) {
+      if (completedTextReqs++ == numBooks * maxNumPages - 1) {
         // All downloads are completed
         processTextResponses();
         console.log("All text done!");

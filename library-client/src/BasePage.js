@@ -1,6 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
-import { PageOne } from "./Pages";
 import TextPage from "./TextPage";
 import { pageFormats } from "./PageFormats";
 import Api from "./Api";
@@ -8,19 +7,14 @@ import Api from "./Api";
 export default function BasePage(props) {
   let { id, page } = useParams();
   const [pageText, setPageText] = useState("");
-  //TODO: Created request to get specific book instead of passing it as props.
-  const book = props.books.find(book => {
-    return book._id == parseInt(id);
-  });
+  const [book, setBook] = useState("");
 
   const handlePageResponse = data => {
-    console.log(data);
     setPageText(data.text);
   };
 
   const getPage = async () => {
     try {
-      console.log(id + parseInt(page));
       const response = await Api.post("/view", {
         _id: id,
         page: parseInt(page)
@@ -31,20 +25,41 @@ export default function BasePage(props) {
     }
   };
 
-  //TODO: call in lifecycle method.
-  getPage();
+  const handleBookResponse = data => {
+    setBook(data);
+  };
+
+  const getBook = async () => {
+    try {
+      const response = await Api.post("/book", {
+        _id: id
+      });
+      handleBookResponse(response.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  // Get data on component mount and refresh when the page number changes.
+  useEffect(() => {
+    getBook();
+    getPage();
+  }, [page]);
 
   //TODO: clean this up
   var nextPage, previousPage;
   if (page <= 1) {
+    page = 1;
     previousPage = 1;
   } else {
     previousPage = parseInt(page) - 1;
   }
-  nextPage = parseInt(page) + 1;
-
-  //TODO: REMOVE after backend is set
-  const text = PageOne;
+  if (page >= book.numPages) {
+    page = book.numPages;
+    nextPage = book.numPages;
+  } else {
+    nextPage = parseInt(page) + 1;
+  }
 
   //TODO: consider renaming file to Page and HOC to basepage
   const Page = props => {
@@ -55,15 +70,17 @@ export default function BasePage(props) {
     }
   };
   return (
-    <div>
+    <div style={{ margin: "auto", maxWidth: "80%" }}>
       <Link to="/">Back to Library</Link> <br />
       <br />
       <br />
-      Displaying book ID: {id} page: {page}
+      <h1>{book.name}</h1>
       {/*TODO: remove format prop and add format to backend */}
-      <Page format={pageFormats.TEXT} />
+      <Page style={{ minHeight: "500px" }} format={pageFormats.TEXT} />
       <Link to={`/view/${id}/${previousPage}`}>Previous Page</Link>
-      <span style={{ padding: "0px 10px" }}>Page {`${page}`} / }</span>
+      <span style={{ padding: "0px 10px" }}>
+        Page {`${page}`} / {`${book.numPages}`}
+      </span>
       <Link to={`/view/${id}/${nextPage}`}>Next Page</Link>
     </div>
   );

@@ -1,6 +1,11 @@
 import React from "react";
-import { useParams } from "react-router-dom";
 
 export default function TextPage(props) {
-  return <plaintext>{props.text}</plaintext>;
+  return (
+    <plaintext
+      style={{ whiteSpace: "normal", minHeight: "600px", textAlign: "justify" }}
+    >
+      {props.text}
+    </plaintext>
+  );
 }

@@ -34,7 +34,7 @@ function App() {
             <BookList books={books} />
           </Route>
           <Route path="/view/:id/:page">
-            <BasePage books={books} />
+            <BasePage />
           </Route>
         </Switch>
       </div>

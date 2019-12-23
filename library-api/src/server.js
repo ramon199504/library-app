@@ -39,7 +39,7 @@ app.get("/books", function(request, response) {
 });
 
 // Handles fetching individual book from DB
-app.get("/book", function(request, response) {
+app.post("/book", function(request, response) {
   Book.find({ _id: request.body._id }, function(err, data) {
     if (err) {
       response.status(500).send({ error: "Could not fetch products" });

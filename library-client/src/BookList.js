@@ -6,8 +6,9 @@ export default function BookList(props) {
     <BookLabel key={book._id} id={book._id} name={book.name}></BookLabel>
   ));
   return (
-    <>
+    <div>
+      <h1>Libros Disponibles:</h1>
       <ul>{books}</ul>
-    </>
+    </div>
   );
 }
