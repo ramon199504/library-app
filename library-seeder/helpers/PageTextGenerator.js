@@ -18,7 +18,7 @@ var pagesJSON = [];
 
 const processTextResponses = () => {
   for (var i = 0; i < numBooks; ++i) {
-    var book = { id: i, numPages: numPages, pages: [] };
+    var book = { id: i, pages: [] };
     for (var j = 0; j < numPages; ++j) {
       book.pages.push({ page: j + 1, text: textResponses[i * numPages + j] });
     }
@@ -33,7 +33,7 @@ const processTextResponses = () => {
 
 const processNameResponses = () => {
   for (var i = 0; i < numBooks; ++i) {
-    booksJSON.push({ name: nameResponses[i], id: i });
+    booksJSON.push({ name: nameResponses[i], id: i, numPages: numPages });
   }
   var jsonBooks = JSON.stringify(booksJSON);
   fs.writeFile("../data/books/books.json", jsonBooks, err => {
