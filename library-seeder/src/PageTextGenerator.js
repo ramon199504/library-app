@@ -34,7 +34,7 @@ const processTextResponses = () => {
   var jsonPages = JSON.stringify(pagesJSON);
   fs.writeFile("../data/pages/pages.json", jsonPages, err => {
     if (err) throw err;
-    console.log("The file has been saved!");
+    console.log("The Pages file has been saved!");
   });
 };
 
@@ -45,7 +45,7 @@ const processNameResponses = () => {
   var jsonBooks = JSON.stringify(booksJSON);
   fs.writeFile("../data/books/books.json", jsonBooks, err => {
     if (err) throw err;
-    console.log("The file has been saved!");
+    console.log("The Books file has been saved!");
   });
 };
 
@@ -58,7 +58,6 @@ for (var j = 0; j < numBooks * maxNumPages; ++j) {
       if (completedTextReqs++ == numBooks * maxNumPages - 1) {
         // All downloads are completed
         processTextResponses();
-        console.log("All text done!");
       }
     });
   });
@@ -73,7 +72,6 @@ for (var i = 0; i < numBooks; ++i) {
       if (completedNamesReqs++ == numBooks - 1) {
         // All downloads are completed
         processNameResponses();
-        console.log("All name done!");
       }
     });
   });
